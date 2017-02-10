@@ -1,0 +1,412 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+      <Schema Namespace="dbunicesarModel.Store" Provider="MySql.Data.MySqlClient" ProviderManifestToken="5.6" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="asignaturas">
+          <Key>
+            <PropertyRef Name="CodiAsig" />
+            <PropertyRef Name="Grupo" />
+          </Key>
+          <Property Name="CodiAsig" Type="varchar" MaxLength="10" Nullable="false" />
+          <Property Name="Grupo" Type="int" Nullable="false" />
+          <Property Name="NombAsig" Type="varchar" MaxLength="50" />
+          <Property Name="Creditos" Type="int" />
+          <Property Name="DiaAsig" Type="varchar" MaxLength="15" />
+          <Property Name="HoraAsig" Type="varchar" MaxLength="15" />
+          <Property Name="LugarAsig" Type="varchar" MaxLength="15" />
+          <Property Name="Profesores_CeduProf" Type="varchar" MaxLength="20" Nullable="false" />
+        </EntityType>
+        <EntityType Name="calificaciones">
+          <Key>
+            <PropertyRef Name="Asignaturas_CodiAsig" />
+            <PropertyRef Name="Asignaturas_Grupo" />
+            <PropertyRef Name="Estudiantes_CeduEstu" />
+          </Key>
+          <Property Name="Asignaturas_CodiAsig" Type="varchar" MaxLength="10" Nullable="false" />
+          <Property Name="Asignaturas_Grupo" Type="int" Nullable="false" />
+          <Property Name="Estudiantes_CeduEstu" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="Nota1" Type="float" />
+          <Property Name="Nota2" Type="float" />
+          <Property Name="Nota3" Type="float" />
+          <Property Name="Habilitacion" Type="float" />
+        </EntityType>
+        <EntityType Name="estudiantes">
+          <Key>
+            <PropertyRef Name="CeduEstu" />
+          </Key>
+          <Property Name="CeduEstu" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="NombEstu" Type="varchar" MaxLength="50" />
+          <Property Name="ApelEstu" Type="varchar" MaxLength="50" />
+          <Property Name="RolEstu" Type="int" />
+          <Property Name="FacuEstu" Type="varchar" MaxLength="50" />
+          <Property Name="ProgEstu" Type="varchar" MaxLength="50" />
+          <Property Name="Semestre" Type="int" />
+          <Property Name="Login_Usuario" Type="varchar" MaxLength="50" Nullable="false" />
+        </EntityType>
+        <EntityType Name="login">
+          <Key>
+            <PropertyRef Name="Usuario" />
+          </Key>
+          <Property Name="Usuario" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="Password" Type="varchar" MaxLength="50" />
+        </EntityType>
+        <EntityType Name="profesores">
+          <Key>
+            <PropertyRef Name="CeduProf" />
+          </Key>
+          <Property Name="CeduProf" Type="varchar" MaxLength="20" Nullable="false" />
+          <Property Name="NombProf" Type="varchar" MaxLength="50" />
+          <Property Name="ApelProf" Type="varchar" MaxLength="50" />
+          <Property Name="RolProf" Type="int" />
+          <Property Name="FacuProf" Type="varchar" MaxLength="50" />
+          <Property Name="ProgProf" Type="varchar" MaxLength="50" />
+          <Property Name="Login_Usuario" Type="varchar" MaxLength="50" Nullable="false" />
+        </EntityType>
+        <Association Name="fk_Asignaturas_has_Estudiantes_Asignaturas1">
+          <End Role="asignaturas" Type="Self.asignaturas" Multiplicity="1" />
+          <End Role="calificaciones" Type="Self.calificaciones" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="asignaturas">
+              <PropertyRef Name="CodiAsig" />
+              <PropertyRef Name="Grupo" />
+            </Principal>
+            <Dependent Role="calificaciones">
+              <PropertyRef Name="Asignaturas_CodiAsig" />
+              <PropertyRef Name="Asignaturas_Grupo" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="fk_Asignaturas_has_Estudiantes_Estudiantes1">
+          <End Role="estudiantes" Type="Self.estudiantes" Multiplicity="1" />
+          <End Role="calificaciones" Type="Self.calificaciones" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="estudiantes">
+              <PropertyRef Name="CeduEstu" />
+            </Principal>
+            <Dependent Role="calificaciones">
+              <PropertyRef Name="Estudiantes_CeduEstu" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="fk_Asignaturas_Profesores1">
+          <End Role="profesores" Type="Self.profesores" Multiplicity="1" />
+          <End Role="asignaturas" Type="Self.asignaturas" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="profesores">
+              <PropertyRef Name="CeduProf" />
+            </Principal>
+            <Dependent Role="asignaturas">
+              <PropertyRef Name="Profesores_CeduProf" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="fk_Estudiantes_Login1">
+          <End Role="login" Type="Self.login" Multiplicity="1" />
+          <End Role="estudiantes" Type="Self.estudiantes" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="login">
+              <PropertyRef Name="Usuario" />
+            </Principal>
+            <Dependent Role="estudiantes">
+              <PropertyRef Name="Login_Usuario" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="fk_Profesores_Login">
+          <End Role="login" Type="Self.login" Multiplicity="1" />
+          <End Role="profesores" Type="Self.profesores" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="login">
+              <PropertyRef Name="Usuario" />
+            </Principal>
+            <Dependent Role="profesores">
+              <PropertyRef Name="Login_Usuario" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="dbunicesarModelStoreContainer">
+          <EntitySet Name="asignaturas" EntityType="Self.asignaturas" Schema="dbunicesar" store:Type="Tables" />
+          <EntitySet Name="calificaciones" EntityType="Self.calificaciones" Schema="dbunicesar" store:Type="Tables" />
+          <EntitySet Name="estudiantes" EntityType="Self.estudiantes" Schema="dbunicesar" store:Type="Tables" />
+          <EntitySet Name="login" EntityType="Self.login" Schema="dbunicesar" store:Type="Tables" />
+          <EntitySet Name="profesores" EntityType="Self.profesores" Schema="dbunicesar" store:Type="Tables" />
+          <AssociationSet Name="fk_Asignaturas_has_Estudiantes_Asignaturas1" Association="Self.fk_Asignaturas_has_Estudiantes_Asignaturas1">
+            <End Role="asignaturas" EntitySet="asignaturas" />
+            <End Role="calificaciones" EntitySet="calificaciones" />
+          </AssociationSet>
+          <AssociationSet Name="fk_Asignaturas_has_Estudiantes_Estudiantes1" Association="Self.fk_Asignaturas_has_Estudiantes_Estudiantes1">
+            <End Role="estudiantes" EntitySet="estudiantes" />
+            <End Role="calificaciones" EntitySet="calificaciones" />
+          </AssociationSet>
+          <AssociationSet Name="fk_Asignaturas_Profesores1" Association="Self.fk_Asignaturas_Profesores1">
+            <End Role="profesores" EntitySet="profesores" />
+            <End Role="asignaturas" EntitySet="asignaturas" />
+          </AssociationSet>
+          <AssociationSet Name="fk_Estudiantes_Login1" Association="Self.fk_Estudiantes_Login1">
+            <End Role="login" EntitySet="login" />
+            <End Role="estudiantes" EntitySet="estudiantes" />
+          </AssociationSet>
+          <AssociationSet Name="fk_Profesores_Login" Association="Self.fk_Profesores_Login">
+            <End Role="login" EntitySet="login" />
+            <End Role="profesores" EntitySet="profesores" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema>
+    </edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="dbunicesarModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityType Name="asignaturas">
+          <Key>
+            <PropertyRef Name="CodiAsig" />
+            <PropertyRef Name="Grupo" />
+          </Key>
+          <Property Name="CodiAsig" Type="String" MaxLength="10" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="Grupo" Type="Int32" Nullable="false" />
+          <Property Name="NombAsig" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Creditos" Type="Int32" />
+          <Property Name="DiaAsig" Type="String" MaxLength="15" FixedLength="false" Unicode="false" />
+          <Property Name="HoraAsig" Type="String" MaxLength="15" FixedLength="false" Unicode="false" />
+          <Property Name="LugarAsig" Type="String" MaxLength="15" FixedLength="false" Unicode="false" />
+          <Property Name="Profesores_CeduProf" Type="String" MaxLength="20" FixedLength="false" Unicode="false" Nullable="false" />
+          <NavigationProperty Name="calificaciones" Relationship="Self.fk_Asignaturas_has_Estudiantes_Asignaturas1" FromRole="asignaturas" ToRole="calificaciones" />
+          <NavigationProperty Name="profesores" Relationship="Self.fk_Asignaturas_Profesores1" FromRole="asignaturas" ToRole="profesores" />
+        </EntityType>
+        <EntityType Name="calificaciones">
+          <Key>
+            <PropertyRef Name="Asignaturas_CodiAsig" />
+            <PropertyRef Name="Asignaturas_Grupo" />
+            <PropertyRef Name="Estudiantes_CeduEstu" />
+          </Key>
+          <Property Name="Asignaturas_CodiAsig" Type="String" MaxLength="10" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="Asignaturas_Grupo" Type="Int32" Nullable="false" />
+          <Property Name="Estudiantes_CeduEstu" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="Nota1" Type="Single" />
+          <Property Name="Nota2" Type="Single" />
+          <Property Name="Nota3" Type="Single" />
+          <Property Name="Habilitacion" Type="Single" />
+          <NavigationProperty Name="asignaturas" Relationship="Self.fk_Asignaturas_has_Estudiantes_Asignaturas1" FromRole="calificaciones" ToRole="asignaturas" />
+          <NavigationProperty Name="estudiantes" Relationship="Self.fk_Asignaturas_has_Estudiantes_Estudiantes1" FromRole="calificaciones" ToRole="estudiantes" />
+        </EntityType>
+        <EntityType Name="estudiantes">
+          <Key>
+            <PropertyRef Name="CeduEstu" />
+          </Key>
+          <Property Name="CeduEstu" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="NombEstu" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="ApelEstu" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="RolEstu" Type="Int32" />
+          <Property Name="FacuEstu" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="ProgEstu" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Semestre" Type="Int32" />
+          <Property Name="Login_Usuario" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
+          <NavigationProperty Name="calificaciones" Relationship="Self.fk_Asignaturas_has_Estudiantes_Estudiantes1" FromRole="estudiantes" ToRole="calificaciones" />
+          <NavigationProperty Name="login" Relationship="Self.fk_Estudiantes_Login1" FromRole="estudiantes" ToRole="login" />
+        </EntityType>
+        <EntityType Name="login">
+          <Key>
+            <PropertyRef Name="Usuario" />
+          </Key>
+          <Property Name="Usuario" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="Password" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="estudiantes" Relationship="Self.fk_Estudiantes_Login1" FromRole="login" ToRole="estudiantes" />
+          <NavigationProperty Name="profesores" Relationship="Self.fk_Profesores_Login" FromRole="login" ToRole="profesores" />
+        </EntityType>
+        <EntityType Name="profesores">
+          <Key>
+            <PropertyRef Name="CeduProf" />
+          </Key>
+          <Property Name="CeduProf" Type="String" MaxLength="20" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="NombProf" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="ApelProf" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="RolProf" Type="Int32" />
+          <Property Name="FacuProf" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="ProgProf" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Login_Usuario" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
+          <NavigationProperty Name="asignaturas" Relationship="Self.fk_Asignaturas_Profesores1" FromRole="profesores" ToRole="asignaturas" />
+          <NavigationProperty Name="login" Relationship="Self.fk_Profesores_Login" FromRole="profesores" ToRole="login" />
+        </EntityType>
+        <Association Name="fk_Asignaturas_has_Estudiantes_Asignaturas1">
+          <End Role="asignaturas" Type="Self.asignaturas" Multiplicity="1" />
+          <End Role="calificaciones" Type="Self.calificaciones" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="asignaturas">
+              <PropertyRef Name="CodiAsig" />
+              <PropertyRef Name="Grupo" />
+            </Principal>
+            <Dependent Role="calificaciones">
+              <PropertyRef Name="Asignaturas_CodiAsig" />
+              <PropertyRef Name="Asignaturas_Grupo" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="fk_Asignaturas_Profesores1">
+          <End Role="profesores" Type="Self.profesores" Multiplicity="1" />
+          <End Role="asignaturas" Type="Self.asignaturas" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="profesores">
+              <PropertyRef Name="CeduProf" />
+            </Principal>
+            <Dependent Role="asignaturas">
+              <PropertyRef Name="Profesores_CeduProf" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="fk_Asignaturas_has_Estudiantes_Estudiantes1">
+          <End Role="estudiantes" Type="Self.estudiantes" Multiplicity="1" />
+          <End Role="calificaciones" Type="Self.calificaciones" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="estudiantes">
+              <PropertyRef Name="CeduEstu" />
+            </Principal>
+            <Dependent Role="calificaciones">
+              <PropertyRef Name="Estudiantes_CeduEstu" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="fk_Estudiantes_Login1">
+          <End Role="login" Type="Self.login" Multiplicity="1" />
+          <End Role="estudiantes" Type="Self.estudiantes" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="login">
+              <PropertyRef Name="Usuario" />
+            </Principal>
+            <Dependent Role="estudiantes">
+              <PropertyRef Name="Login_Usuario" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="fk_Profesores_Login">
+          <End Role="login" Type="Self.login" Multiplicity="1" />
+          <End Role="profesores" Type="Self.profesores" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="login">
+              <PropertyRef Name="Usuario" />
+            </Principal>
+            <Dependent Role="profesores">
+              <PropertyRef Name="Login_Usuario" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="dbunicesarEntities1" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="asignaturas" EntityType="Self.asignaturas" />
+          <EntitySet Name="calificaciones" EntityType="Self.calificaciones" />
+          <EntitySet Name="estudiantes" EntityType="Self.estudiantes" />
+          <EntitySet Name="login" EntityType="Self.login" />
+          <EntitySet Name="profesores" EntityType="Self.profesores" />
+          <AssociationSet Name="fk_Asignaturas_has_Estudiantes_Asignaturas1" Association="Self.fk_Asignaturas_has_Estudiantes_Asignaturas1">
+            <End Role="asignaturas" EntitySet="asignaturas" />
+            <End Role="calificaciones" EntitySet="calificaciones" />
+          </AssociationSet>
+          <AssociationSet Name="fk_Asignaturas_Profesores1" Association="Self.fk_Asignaturas_Profesores1">
+            <End Role="profesores" EntitySet="profesores" />
+            <End Role="asignaturas" EntitySet="asignaturas" />
+          </AssociationSet>
+          <AssociationSet Name="fk_Asignaturas_has_Estudiantes_Estudiantes1" Association="Self.fk_Asignaturas_has_Estudiantes_Estudiantes1">
+            <End Role="estudiantes" EntitySet="estudiantes" />
+            <End Role="calificaciones" EntitySet="calificaciones" />
+          </AssociationSet>
+          <AssociationSet Name="fk_Estudiantes_Login1" Association="Self.fk_Estudiantes_Login1">
+            <End Role="login" EntitySet="login" />
+            <End Role="estudiantes" EntitySet="estudiantes" />
+          </AssociationSet>
+          <AssociationSet Name="fk_Profesores_Login" Association="Self.fk_Profesores_Login">
+            <End Role="login" EntitySet="login" />
+            <End Role="profesores" EntitySet="profesores" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="dbunicesarModelStoreContainer" CdmEntityContainer="dbunicesarEntities1">
+          <EntitySetMapping Name="asignaturas">
+            <EntityTypeMapping TypeName="dbunicesarModel.asignaturas">
+              <MappingFragment StoreEntitySet="asignaturas">
+                <ScalarProperty Name="CodiAsig" ColumnName="CodiAsig" />
+                <ScalarProperty Name="Grupo" ColumnName="Grupo" />
+                <ScalarProperty Name="NombAsig" ColumnName="NombAsig" />
+                <ScalarProperty Name="Creditos" ColumnName="Creditos" />
+                <ScalarProperty Name="DiaAsig" ColumnName="DiaAsig" />
+                <ScalarProperty Name="HoraAsig" ColumnName="HoraAsig" />
+                <ScalarProperty Name="LugarAsig" ColumnName="LugarAsig" />
+                <ScalarProperty Name="Profesores_CeduProf" ColumnName="Profesores_CeduProf" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="calificaciones">
+            <EntityTypeMapping TypeName="dbunicesarModel.calificaciones">
+              <MappingFragment StoreEntitySet="calificaciones">
+                <ScalarProperty Name="Asignaturas_CodiAsig" ColumnName="Asignaturas_CodiAsig" />
+                <ScalarProperty Name="Asignaturas_Grupo" ColumnName="Asignaturas_Grupo" />
+                <ScalarProperty Name="Estudiantes_CeduEstu" ColumnName="Estudiantes_CeduEstu" />
+                <ScalarProperty Name="Nota1" ColumnName="Nota1" />
+                <ScalarProperty Name="Nota2" ColumnName="Nota2" />
+                <ScalarProperty Name="Nota3" ColumnName="Nota3" />
+                <ScalarProperty Name="Habilitacion" ColumnName="Habilitacion" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="estudiantes">
+            <EntityTypeMapping TypeName="dbunicesarModel.estudiantes">
+              <MappingFragment StoreEntitySet="estudiantes">
+                <ScalarProperty Name="CeduEstu" ColumnName="CeduEstu" />
+                <ScalarProperty Name="NombEstu" ColumnName="NombEstu" />
+                <ScalarProperty Name="ApelEstu" ColumnName="ApelEstu" />
+                <ScalarProperty Name="RolEstu" ColumnName="RolEstu" />
+                <ScalarProperty Name="FacuEstu" ColumnName="FacuEstu" />
+                <ScalarProperty Name="ProgEstu" ColumnName="ProgEstu" />
+                <ScalarProperty Name="Semestre" ColumnName="Semestre" />
+                <ScalarProperty Name="Login_Usuario" ColumnName="Login_Usuario" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="login">
+            <EntityTypeMapping TypeName="dbunicesarModel.login">
+              <MappingFragment StoreEntitySet="login">
+                <ScalarProperty Name="Usuario" ColumnName="Usuario" />
+                <ScalarProperty Name="Password" ColumnName="Password" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="profesores">
+            <EntityTypeMapping TypeName="dbunicesarModel.profesores">
+              <MappingFragment StoreEntitySet="profesores">
+                <ScalarProperty Name="CeduProf" ColumnName="CeduProf" />
+                <ScalarProperty Name="NombProf" ColumnName="NombProf" />
+                <ScalarProperty Name="ApelProf" ColumnName="ApelProf" />
+                <ScalarProperty Name="RolProf" ColumnName="RolProf" />
+                <ScalarProperty Name="FacuProf" ColumnName="FacuProf" />
+                <ScalarProperty Name="ProgProf" ColumnName="ProgProf" />
+                <ScalarProperty Name="Login_Usuario" ColumnName="Login_Usuario" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="false" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="true" />
+        <DesignerProperty Name="UseLegacyProvider" Value="false" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="Ninguno" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams></Diagrams>
+  </Designer>
+</edmx:Edmx>
